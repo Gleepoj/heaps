@@ -161,6 +161,16 @@ class Vector #if apicheck implements h2d.impl.PointApi<Vector,Matrix> #end {
 		return new Vector(x,y,z,w);
 	}
 
+	public inline function getPolar(){
+		return Math.atan2(y,x);
+	}
+
+	public inline function setFromPolar(ang:Float,rad:Float){
+		var radius =100; //rad!=null ? rad : 1;
+		x = Math.cos(ang)*radius;
+		y = Math.sin(ang)*radius;
+	}
+
 	public inline function toPoint() {
 		return new h3d.col.Point(x, y, z);
 	}
