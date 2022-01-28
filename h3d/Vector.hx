@@ -43,6 +43,9 @@ class Vector #if apicheck implements h2d.impl.PointApi<Vector,Matrix> #end {
 		// multiply only affects length
 		return new Vector(x * v, y * v, z * v, w);
 	}
+	public inline function divide( v : Float) {
+		return new Vector(x / v, y / v, z / v, w);
+	}
 
 	public inline function equals( v : Vector ) {
 		return x == v.x && y == v.y && z == v.z && w == v.w;
@@ -77,6 +80,23 @@ class Vector #if apicheck implements h2d.impl.PointApi<Vector,Matrix> #end {
 		var k = lengthSq();
 		if( k < hxd.Math.EPSILON ) k = 0 else k = k.invSqrt();
 		return new Vector(x * k, y * k, z * k);
+	}
+
+/* 	p5.Vector.prototype.limit = function limit(max) {
+		const mSq = this.magSq();
+		if (mSq > max * max) {
+		  this.div(Math.sqrt(mSq)) //normalize it
+			.mult(max);
+		}
+		return this;
+	  }; */
+	public inline function limit(max:Float){
+		var lSq = this.lengthSq();
+		if(lSq > max*max){
+			this.divide(Math.sqrt(lSq));
+			this.scale(max);
+		}
+		return this;
 	}
 
 	public inline function set(x=0.,y=0.,z=0.,w=1.) {
@@ -167,8 +187,8 @@ class Vector #if apicheck implements h2d.impl.PointApi<Vector,Matrix> #end {
 
 	public inline function setFromPolar(ang:Float,rad:Float){
 		var radius =100; //rad!=null ? rad : 1;
-		x = Math.cos(ang)*radius;
-		y = Math.sin(ang)*radius;
+		this.x = Math.cos(ang)*radius;
+		this.y = Math.sin(ang)*radius;
 	}
 
 	public inline function toPoint() {
@@ -285,7 +305,7 @@ class Vector #if apicheck implements h2d.impl.PointApi<Vector,Matrix> #end {
 
 		return new h3d.Vector(h, s, l, a);
 	}
-
+	
 	public static inline function fromColor( c : Int, scale : Float = 1.0 ) {
 		var s = scale / 255;
 		return new Vector(((c>>16)&0xFF)*s,((c>>8)&0xFF)*s,(c&0xFF)*s,(c >>> 24)*s);
