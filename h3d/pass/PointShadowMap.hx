@@ -77,11 +77,13 @@ class PointShadowMap extends Shadows {
 	}
 
 	override function syncShader(texture) {
+		if( texture == null )
+			throw "assert";
 		var pointLight = cast(light, h3d.scene.pbr.PointLight);
 		pshader.shadowMap = texture;
 		pshader.shadowBias = bias;
 		pshader.shadowPower = power;
-		light.getAbsPos().getPosition(pshader.lightPos);
+		pshader.lightPos = light.getAbsPos().getPosition();
 		pshader.zFar = pointLight.range;
 
 		// ESM

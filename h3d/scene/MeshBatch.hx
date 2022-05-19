@@ -95,7 +95,8 @@ class MeshBatch extends MultiMaterial {
 			alloc.disposeFloats(dataPasses.data);
 			dataPasses = dataPasses.next;
 		}
-		instanced.commands.dispose();
+		if( instanced.commands != null )
+			instanced.commands.dispose();
 		shadersChanged = true;
 	}
 
@@ -254,6 +255,17 @@ class MeshBatch extends MultiMaterial {
 			p = p.next;
 		}
 		needUpload = true;
+	}
+
+	override function getBoundsRec( b : h3d.col.Bounds ) {
+		var old = primitive;
+		primitive = null;
+		b = super.getBoundsRec(b);
+		primitive = old;
+		if( primitive == null || flags.has(FIgnoreBounds) )
+			return b;
+		b.add(primitive.getBounds());
+		return b;
 	}
 
 	public function emitInstance() {

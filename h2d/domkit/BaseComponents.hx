@@ -73,6 +73,11 @@ class CustomParser extends CssValue.ValueParser {
 		#end
 	}
 
+	public function parseResource( v : CssValue) {
+		var path = parsePath(v);
+		return loadResource(path);
+	}
+
 	public function parseTile( v : CssValue) {
 		try {
 			switch( v ) {
@@ -187,6 +192,7 @@ class CustomParser extends CssValue.ValueParser {
 					cutoff: args.length >= 4 ? parseFloat(args[3]) : 0.5,
 					smooth: args.length >= 5 ? parseFloat(args[4]) : 1.0/32.0
 				};
+				adjustSdfParams(sdf);
 			default:
 				path = parsePath(value);
 		}
@@ -199,6 +205,10 @@ class CustomParser extends CssValue.ValueParser {
 		else
 			return res.to(hxd.res.BitmapFont).toFont();
 		#end
+	}
+
+	public static dynamic function adjustSdfParams( sdf : { size : Int, channel : h2d.Font.SDFChannel, cutoff : Float, smooth : Float }) {
+
 	}
 
 	public function parseTextShadow( value : CssValue ) {
@@ -553,6 +563,24 @@ class MaskComp extends ObjectComp implements domkit.Component.ComponentDecl<h2d.
 	}
 }
 
+@:uiComp("video") @:domkitDecl
+class VideoComp extends DrawableComp implements domkit.Component.ComponentDecl<h2d.Video> {
+	@:p(resource) var src : hxd.res.Any;
+	@:p var loop : Bool;
+
+	static function create( parent : h2d.Object ) {
+		return new h2d.Video(parent);
+	}
+
+	static function set_src( o : h2d.Video, v ) {
+		o.loadResource(v);
+	}
+
+	static function set_loop( o : h2d.Video, v ) {
+		o.loop = v;
+	}
+}
+
 @:uiComp("bitmap") @:domkitDecl
 class BitmapComp extends DrawableComp implements domkit.Component.ComponentDecl<h2d.Bitmap> {
 
@@ -668,6 +696,7 @@ class HtmlTextComp extends TextComp implements domkit.Component.ComponentDecl<h2
 class ScaleGridComp extends DrawableComp implements domkit.Component.ComponentDecl<h2d.ScaleGrid> {
 
 	@:p var ignoreScale : Bool;
+	@:p var borderScale : Float;
 	@:p var tileBorders : Bool;
 
 	static function create( parent : h2d.Object ) {
@@ -676,6 +705,10 @@ class ScaleGridComp extends DrawableComp implements domkit.Component.ComponentDe
 
 	static function set_ignoreScale(o : h2d.ScaleGrid, v) {
 		o.ignoreScale = v;
+	}
+
+	static function set_borderScale(o : h2d.ScaleGrid, v) {
+		o.borderScale = v;
 	}
 
 	static function set_tileBorders(o : h2d.ScaleGrid, v) {
